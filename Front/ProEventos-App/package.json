@@ -20,6 +20,7 @@
     "@angular/router": "~12.2.0",
     "@fortawesome/fontawesome-free": "^6.7.2",
     "bootstrap": "^4.6.2",
+    "bootswatch": "^5.3.8",
     "ngx-bootstrap": "^6.2.0",
     "ngx-spinner": "^11.0.2",
     "ngx-toastr": "^13.2.1",
