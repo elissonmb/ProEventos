@@ -15,12 +15,13 @@ export class EventoListaComponent implements OnInit {
 
   public eventos : Evento[] = [];
   public eventosFiltrados : Evento[] = [];
+  public eventoId = 0;
   modalRef!: BsModalRef;
 
   public widthImg: number = 100;
   public marginImg: number = 2;
   public mostrarImagem: boolean = true;
-  private _filtroLista : string = '';
+  private _filtroLista = '';
 
 
   public get filtroLista(): string{
@@ -49,18 +50,18 @@ export class EventoListaComponent implements OnInit {
 
  public ngOnInit(): void {
   this.spinner.show();
-  this.GetEventos();
+  this.carregarEventos();
   }
 
     public alterarImagem(): void{
     this.mostrarImagem = !this.mostrarImagem;
   };
 
-    public GetEventos(): void{
+    public carregarEventos(): void{
       this.eventoService.getEvento().subscribe({
         next: (eventos: Evento[]) => {
           this.eventos = eventos;
-          this.eventosFiltrados = this.eventos;
+          this.eventosFiltrados = eventos;
         },
         error: (error: any) => {
           this.spinner.hide();
@@ -69,19 +70,37 @@ export class EventoListaComponent implements OnInit {
         complete: () => this.spinner.hide()
       });
     }
-openModal(template: TemplateRef<any>): void {
+openModal(event: any, template: TemplateRef<any>, eventoId: number): void {
+  event.stopPropagation();
+  this.eventoId = eventoId;
   this.modalRef = this.modalService.show(template, { class: 'modal-sm' });
 }
 confirm(): void {
   this.modalRef.hide();
-  this.toastr.success('Evento deletado com sucesso!', 'Deletado!');
+  this.spinner.show();
+
+  this.eventoService.deleteEvento(this.eventoId).subscribe(
+    (result: any) => {
+      if (result.message === 'Deletado') {
+        this.toastr.success('Evento deletado com sucesso!', 'Deletado!');
+        this.spinner.hide();
+        this.carregarEventos();
+    }
+  },
+    (error: any) => {
+      this.toastr.error(`Erro ao deletar o evento ${this.eventoId}`, 'Erro!');
+      this.spinner.hide();
+      console.error(error);
+    },
+    () => this.spinner.hide(),
+  );
 }
 decline(): void {
   this.modalRef.hide();
 }
 
 detalheEvento(eventoId: number): void {
-  this.router.navigate([`/eventos/detalhe/${eventoId}`]);
+  this.router.navigate([`eventos/detalhe/${eventoId}`]);
 }
 
 }

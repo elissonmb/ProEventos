@@ -17,7 +17,6 @@ namespace ProEventos.Persistence.Migrations
                     DataEvento = table.Column<DateTime>(type: "TEXT", nullable: true),
                     Tema = table.Column<string>(type: "TEXT", nullable: true),
                     QtdPessoas = table.Column<int>(type: "INTEGER", nullable: false),
-                    Lote = table.Column<string>(type: "TEXT", nullable: true),
                     ImagemURL = table.Column<string>(type: "TEXT", nullable: true),
                     Telefone = table.Column<string>(type: "TEXT", nullable: true),
                     Email = table.Column<string>(type: "TEXT", nullable: true)
@@ -96,7 +95,7 @@ namespace ProEventos.Persistence.Migrations
                 name: "RedesSociais",
                 columns: table => new
                 {
-                    ID = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Nome = table.Column<string>(type: "TEXT", nullable: true),
                     URL = table.Column<string>(type: "TEXT", nullable: true),
@@ -105,19 +104,19 @@ namespace ProEventos.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RedesSociais", x => x.ID);
+                    table.PrimaryKey("PK_RedesSociais", x => x.Id);
                     table.ForeignKey(
                         name: "FK_RedesSociais_Eventos_EventoId",
                         column: x => x.EventoId,
                         principalTable: "Eventos",
                         principalColumn: "EventoId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_RedesSociais_Palestrantes_PalestranteID",
                         column: x => x.PalestranteID,
                         principalTable: "Palestrantes",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(

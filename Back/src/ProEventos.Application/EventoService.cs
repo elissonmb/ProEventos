@@ -67,22 +67,24 @@ namespace ProEventos.Domain
                 throw new Exception(ex.Message);
             }
         }
-        public async Task<bool> DeleteEvento(int eventoId)
+public async Task<bool> DeleteEvento(int eventoId)
+    {
+        try
         {
-            try
-            {
-                var evento = await _eventoPersist.GetEventoByIdAsync(eventoId, false);
-                if (evento == null) throw new Exception("Evento para delete não foi encontrado.");
+            var evento = await _eventoPersist.GetEventoByIdAsync(eventoId, false);
+            if (evento == null) throw new Exception("Evento para delete não encontrado.");
 
-                _geralPersist.Delete<EventoDto>(evento);
-                return await _geralPersist.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
 
-                throw new Exception(ex.Message);
-            }
+
+            _geralPersist.Delete<Evento>(evento);
+            return await _geralPersist.SaveChangesAsync();
         }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+
+        }
+    }
 
         public async Task<EventoDto[]> GetAllEventosAsync(bool includePalestrantes = false)
         {
@@ -117,7 +119,7 @@ namespace ProEventos.Domain
             }
         }
 
-        public async Task<EventoDto> GetEventoById(int eventoId, bool includePalestrantes = false)
+        public async Task<EventoDto> GetEventoByIdAsync(int eventoId, bool includePalestrantes = false)
         {
             try
             {

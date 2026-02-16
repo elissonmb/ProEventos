@@ -16,7 +16,6 @@ namespace ProEventos.Application.Dtos
         public string Tema { get; set; }
         [Range(2, 120000, ErrorMessage = "O campo {0} deve ter entre {1} e {2} pessoas.")]
         public int QtdPessoas { get; set; }
-        public string Lote { get; set; }
 
         [RegularExpression(@".*\.(gif|jpe?g|bmp|png)$", 
             ErrorMessage = "O campo {0} deve ser uma imagem com extensão válida (.gif, .jpg, .jpeg, .bmp, .png).")]

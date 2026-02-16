@@ -4,6 +4,7 @@ using ProEventos.Persistence.Context;
 using ProEventos.Persistence.Interfaces;
 using System.Linq;
 using System.Threading.Tasks;
+
 namespace ProEventos.Persistence
 {
     public class EventoPersist : IEventoPersist
@@ -20,6 +21,7 @@ namespace ProEventos.Persistence
             IQueryable<Evento> query = _context.Eventos
                 .Include(e => e.Lotes)
                 .Include(e => e.RedesSociais);
+
             if(includePalestrantes)
             {
                 query = query
@@ -31,7 +33,7 @@ namespace ProEventos.Persistence
             return await query.ToArrayAsync();
         }
 
-        public async Task<Evento[]> GetAllEventosByTemaAsync(string tema, bool includePalestrantes)
+        public async Task<Evento[]> GetAllEventosByTemaAsync(string tema, bool includePalestrantes = false)
         {
             IQueryable<Evento> query = _context.Eventos
                 .Include(e => e.Lotes)
@@ -48,11 +50,12 @@ namespace ProEventos.Persistence
 
             return await query.ToArrayAsync();
         }
-        public async Task<Evento> GetEventoById(int eventoId, bool includePalestrantes)
+        public async Task<Evento> GetEventoByIdAsync(int eventoId, bool includePalestrantes = false)
         {
             IQueryable<Evento> query = _context.Eventos
                 .Include(e => e.Lotes)
                 .Include(e => e.RedesSociais);
+
             if (includePalestrantes)
             {
                 query = query
@@ -62,7 +65,7 @@ namespace ProEventos.Persistence
             query = query
                 .OrderBy(e => e.EventoId);
 
-            return await query.FirstOrDefaultAsync();
+            return await query.FirstOrDefaultAsync(e => e.EventoId == eventoId);
         }
 
         public async Task<Palestrante[]> GetAllPalestrantesAsync(bool includeEventos = false)
