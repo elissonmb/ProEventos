@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace ProEventos.Domain
 
 {
-    public class EventoService : IEventosService
+    public class EventoService : IEventoService
     {
         private readonly IMapper _mapper;
         private readonly IGeralPersist _geralPersist;

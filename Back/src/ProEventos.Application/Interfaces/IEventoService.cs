@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace ProEventos.Application.Interfaces
 {
-    public interface IEventosService
+    public interface IEventoService
     {
         Task<EventoDto> AddEventos(EventoDto model);
         Task<EventoDto> UpdateEvento(int eventoId, EventoDto model);
