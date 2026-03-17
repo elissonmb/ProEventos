@@ -11,6 +11,7 @@ import { Lote } from '@app/models/Lote';
 import { EventoService } from '@app/services/evento.service';
 import { LoteService } from '@app/services/lote.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { environment } from '@environments/environment';
 
 @Component({
   selector: 'app-evento-detalhe',
@@ -25,6 +26,8 @@ export class EventoDetalheComponent implements OnInit {
   evento = {} as Evento;
   estadoSalvar = 'post';
   loteAtual = {id: 0, nome: '', index: 0};
+  imagemURL = 'assets/upload.png';
+  file!: FileList;
   
   get modoEditar(): boolean {
     return this.estadoSalvar === 'put';
@@ -69,6 +72,9 @@ export class EventoDetalheComponent implements OnInit {
         (evento: Evento) => {
           this.evento = { ...evento };
           this.form.patchValue(this.evento);
+          if (this.evento.imagemURL !== '') {
+            this.imagemURL = environment.apiUrl + 'resources/images/' + this.evento.imagemURL;
+          }
           this.evento.lotes.forEach(lote => this.lotes.push(this.criarLote(lote)));
         },
         (error: any) => {
@@ -198,5 +204,28 @@ public confirmDeleteLote(): void {
 }
 public declineDeleteLote(): void {
   this.modalRef.hide();
+}
+
+onFileChange(ev: any): void {
+
+const reader = new FileReader();
+reader.onload = (event: any) => this.imagemURL = event.target.result;
+this.file = ev.target.files;
+reader.readAsDataURL(this.file.item(0) as File);
+this.uploadImagem();
+
+}
+
+public uploadImagem(): void {
+this.spinner.show();
+this.eventoService.postUpload(this.eventoId, this.file).subscribe(
+  () => {
+    this.CarregarEvento();
+    this.toastr.success('Imagem atualizada com sucesso', 'Sucesso');
+  },
+  (error : any) => {
+    this.toastr.error('Erro ao tentar atualizar imagem', 'Erro');
+  }
+).add(() => this.spinner.hide());
 }
 }

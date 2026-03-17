@@ -1,5 +1,6 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { Router } from '@angular/router';
+import { environment } from '@environments/environment.prod';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
@@ -101,6 +102,12 @@ decline(): void {
 
 detalheEvento(eventoId: number): void {
   this.router.navigate([`eventos/detalhe/${eventoId}`]);
+}
+
+public mostraImagem(imagemURL: string): string {
+  return (imagemURL !== '') 
+  ? `${environment.apiUrl}resources/images/${imagemURL}` 
+  : 'assets/semImagem.png';
 }
 
 }

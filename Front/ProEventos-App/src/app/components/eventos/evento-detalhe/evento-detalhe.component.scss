@@ -22,3 +22,15 @@
   --default-height: 25px;
   top: var(--default-height);
 }
+
+.card-evento-view {
+  position: sticky;
+  top: 10%;
+}
+.card-img-block {
+  img{
+    cursor: pointer;
+    border-radius: 3px 3px 0px 0px;
+    width: 100%;
+  }
+}
