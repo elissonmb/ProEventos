@@ -26,6 +26,9 @@ namespace ProEventos.Application.Dtos
 
         [EmailAddress(ErrorMessage = "O campo {0} está em formato inválido.")]
         public string Email { get; set; }
+
+        public int UserId { get; set; }
+        public UserDto UserDto { get; set; }
         public IEnumerable<LoteDto> Lotes { get; set; }
         public IEnumerable<RedeSocialDto> RedesSociais { get; set; }
         public IEnumerable<PalestranteDto> PalestrantesEventos { get; set; }
