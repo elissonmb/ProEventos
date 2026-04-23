@@ -105,7 +105,7 @@ detalheEvento(eventoId: number): void {
 }
 
 public mostraImagem(imagemURL: string): string {
-  return (imagemURL !== '') 
+  return (imagemURL !== '' && imagemURL !== null) 
   ? `${environment.apiUrl}resources/images/${imagemURL}` 
   : 'assets/semImagem.png';
 }

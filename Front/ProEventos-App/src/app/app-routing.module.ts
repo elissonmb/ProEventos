@@ -14,17 +14,20 @@ import { RegistrationComponent } from './components/user/registration/registrati
 import { PerfilComponent } from './components/user/perfil/perfil.component';
 
 import { ContatosComponent } from './components/contatos/contatos.component';
+import { AuthGuard } from './guard/auth.guard';
+import { HomeComponent } from './components/home/home.component';
 
 const routes: Routes = [
-  { path: 'user', component: UserComponent,
+
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  {
+    path: '',
+    runGuardsAndResolvers: 'always',
+    canActivate: [AuthGuard],
     children: [
-      { path: 'login', component: LoginComponent },
-      { path: 'registration', component: RegistrationComponent }
-    ]
-  },
-    { path: 'user/perfil', component: PerfilComponent },
-  
-  { path: 'eventos', redirectTo: 'eventos/lista', pathMatch: 'full' },
+       { path: 'user', redirectTo: 'user/perfil' },
+       { path: 'user/perfil', component: PerfilComponent },
+       { path: 'eventos', redirectTo: 'eventos/lista', pathMatch: 'full' },
   { 
     path: 'eventos', component: EventosComponent,
     children: [
@@ -33,12 +36,19 @@ const routes: Routes = [
       { path: 'detalhe', component: EventoDetalheComponent },
     ] 
   },
-  { path: 'contatos', component: ContatosComponent },
-  { path: 'dashboard', component: DashboardComponent},
-  { path: 'palestrantes', component: PalestrantesComponent },
-
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-  { path: '**', redirectTo: 'dashboard', pathMatch: 'full' }
+      { path: 'contatos', component: ContatosComponent },
+      { path: 'dashboard', component: DashboardComponent },
+      { path: 'palestrantes', component: PalestrantesComponent},
+    ]
+  },  
+  { path: 'user', component: UserComponent,
+    children: [
+      { path: 'login', component: LoginComponent },
+      { path: 'registration', component: RegistrationComponent }
+    ]
+  },
+    { path: 'home', component: HomeComponent },
+    { path: '**', redirectTo: 'home', pathMatch: 'full' }
 ];
 
 @NgModule({

@@ -88,7 +88,7 @@ namespace ProEventos.API.Controllers
                 if (evento == null) return NoContent();
 
                 var file = Request.Form.Files[0];
-                if (file.Length > 0)
+                if (file.Length > 0 && evento.ImagemURL != null) 
                 {
                     DeleteImage(evento.ImagemURL);
                     evento.ImagemURL = await SaveImage(file);
@@ -160,13 +160,6 @@ namespace ProEventos.API.Controllers
             }
         }
         [NonAction]
-        public void DeleteImage(string imageName)
-        {
-            var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, @"Resources/images", imageName);
-            if (System.IO.File.Exists(imagePath))
-                System.IO.File.Delete(imagePath);
-        }
-        [NonAction]
         public async Task<string> SaveImage(IFormFile imageFile)
         {
             string imageName = new String(Path.GetFileNameWithoutExtension(imageFile.FileName)
@@ -174,7 +167,7 @@ namespace ProEventos.API.Controllers
                                               .ToArray())
                                               .Replace(' ', '-');
             imageName = $"{imageName}{DateTime.UtcNow.ToString("yymmssffff")}{Path.GetExtension(imageFile.FileName)}";
-            var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, @"Resources/images", imageName);
+            var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, @"Resources/Images", imageName);
             using (var fileStream = new FileStream(imagePath, FileMode.Create))
             {
                 await imageFile.CopyToAsync(fileStream);
@@ -182,5 +175,12 @@ namespace ProEventos.API.Controllers
             return imageName;
         }
 
+        [NonAction]
+        public void DeleteImage(string imageName)
+        {
+            var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, @"Resources/Images", imageName);
+            if (System.IO.File.Exists(imagePath))
+                System.IO.File.Delete(imagePath);
+        }
     }
 }

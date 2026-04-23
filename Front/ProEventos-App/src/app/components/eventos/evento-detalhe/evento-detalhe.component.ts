@@ -20,13 +20,13 @@ import { environment } from '@environments/environment';
 })
 export class EventoDetalheComponent implements OnInit {
 
-  modalRef!: BsModalRef;
-  eventoId! : number;
-  form!: FormGroup;
+  modalRef: BsModalRef;
+  eventoId : number;
+  form: FormGroup;
   evento = {} as Evento;
   estadoSalvar = 'post';
   loteAtual = {id: 0, nome: '', index: 0};
-  imagemURL = 'assets/upload.png';
+  imagemURL = '/assets/upload.png';
   file!: FileList;
   
   get modoEditar(): boolean {
@@ -72,7 +72,7 @@ export class EventoDetalheComponent implements OnInit {
         (evento: Evento) => {
           this.evento = { ...evento };
           this.form.patchValue(this.evento);
-          if (this.evento.imagemURL !== '') {
+          if (this.evento.imagemURL !== '' && this.evento.imagemURL !== null) {
             this.imagemURL = environment.apiUrl + 'resources/images/' + this.evento.imagemURL;
           }
           this.evento.lotes.forEach(lote => this.lotes.push(this.criarLote(lote)));
@@ -96,7 +96,7 @@ public validation(): void {
     local : ['', Validators.required],
     dataEvento : ['', Validators.required],
     qtdPessoas : ['', [Validators.required, Validators.max(120000)]],
-    imagemURL : ['', Validators.required],
+    //imagemURL : ['', Validators.required],
     telefone : ['', Validators.required],
     email : ['', [Validators.required, Validators.email]],
     lotes : this.fb.array([]),
