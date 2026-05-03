@@ -1,9 +1,12 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { Router } from '@angular/router';
+import { PaginatedResult, Pagination } from '@app/models/Pagination';
 import { environment } from '@environments/environment.prod';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
+import { Subject } from 'rxjs';
+import { debounce, debounceTime } from 'rxjs/operators';
 import { Evento } from 'src/app/models/Evento';
 import { EventoService } from 'src/app/services/evento.service';
 
@@ -15,14 +18,16 @@ import { EventoService } from 'src/app/services/evento.service';
 export class EventoListaComponent implements OnInit {
 
   public eventos : Evento[] = [];
-  public eventosFiltrados : Evento[] = [];
   public eventoId = 0;
   modalRef!: BsModalRef;
+  public pagination = {} as Pagination;
 
   public widthImg: number = 100;
   public marginImg: number = 2;
   public mostrarImagem: boolean = true;
   private _filtroLista = '';
+
+  termoBusca: Subject<string> = new Subject<string>();
 
 
   public get filtroLista(): string{
@@ -31,16 +36,31 @@ export class EventoListaComponent implements OnInit {
 
   public set filtroLista(value : string){
     this._filtroLista = value;
-    this.eventosFiltrados = this.filtroLista ? this.filtrarEventos(this.filtroLista) : this.eventos;
   }
 
-  public filtrarEventos(filtrarPor: string) : Evento[] {
-    filtrarPor = filtrarPor.toLocaleLowerCase();
-    return this.eventos.filter(
-      (evento : any) => evento.tema.toLocaleLowerCase().indexOf(filtrarPor) !== -1 ||
-      evento.local.toLocaleLowerCase().indexOf(filtrarPor) !== -1
-    )
-  }
+  public filtrarEventos(evt : any) : void {
+    if(this.termoBusca.observers.length === 0){
+    this.termoBusca.pipe(debounceTime(1000)).subscribe(
+      filtrarPor => {
+        this.spinner.show();
+        this.eventoService
+       .getEvento(this.pagination.currentPage, 
+                  this.pagination.itemsPerPage, 
+                  filtrarPor)
+                  .subscribe(
+                    (PaginatedResult: PaginatedResult<Evento[]>) => {
+                      this.eventos = PaginatedResult.result;
+                      this.pagination = PaginatedResult.pagination;
+                      evt.value
+                    },
+                    (error: any) => {
+                      this.spinner.hide();
+                      this.toastr.error('Erro ao filtrar os eventos', 'Erro!');
+                    }
+                  ).add(() => this.spinner.hide())
+      })
+    }
+    this.termoBusca.next(evt.value);}
 
   constructor(private eventoService: EventoService,
               private modalService: BsModalService,
@@ -50,7 +70,7 @@ export class EventoListaComponent implements OnInit {
   ) { }
 
  public ngOnInit(): void {
-  this.spinner.show();
+  this.pagination = {currentPage : 1, itemsPerPage : 3, totalItems : 1} as Pagination;
   this.carregarEventos();
   }
 
@@ -59,18 +79,19 @@ export class EventoListaComponent implements OnInit {
   };
 
     public carregarEventos(): void{
-      this.eventoService.getEvento().subscribe({
-        next: (eventos: Evento[]) => {
-          this.eventos = eventos;
-          this.eventosFiltrados = eventos;
+      this.spinner.show();
+      this.eventoService.getEvento(this.pagination.currentPage, this.pagination.itemsPerPage).subscribe(
+        (response: PaginatedResult<Evento[]>) => {
+          this.eventos = response.result;
+          this.pagination = response.pagination;
         },
-        error: (error: any) => {
+          (error: any) => {
           this.spinner.hide();
           this.toastr.error('Erro ao carregar os eventos', 'Erro!');
         },
-        complete: () => this.spinner.hide()
-      });
+      ).add(() => this.spinner.hide());
     }
+    
 openModal(event: any, template: TemplateRef<any>, eventoId: number): void {
   event.stopPropagation();
   this.eventoId = eventoId;
@@ -108,6 +129,11 @@ public mostraImagem(imagemURL: string): string {
   return (imagemURL !== '' && imagemURL !== null) 
   ? `${environment.apiUrl}resources/images/${imagemURL}` 
   : 'assets/semImagem.png';
+}
+
+public pageChanged(event: any): void {
+  this.pagination.currentPage = event.page;
+  this.carregarEventos();
 }
 
 }

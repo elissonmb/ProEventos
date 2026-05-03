@@ -17,6 +17,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { defineLocale } from 'ngx-bootstrap/chronos';
 import { ptBrLocale } from 'ngx-bootstrap/locale';
 import { NgxCurrencyModule } from 'ngx-currency';
+import { PaginationModule } from 'ngx-bootstrap/pagination';
 
 
 
@@ -87,7 +88,9 @@ defineLocale('pt-br', ptBrLocale);
 }),
     NgxSpinnerModule,
     BrowserAnimationsModule,
-    NgxCurrencyModule
+    NgxCurrencyModule,
+    PaginationModule
+
   ],
   providers: [
     EventoService,
